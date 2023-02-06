@@ -11,9 +11,9 @@ npm install -g newman
 El comando de ejecución newman le permite especificar una colección para ejecutar. Puede exportar fácilmente su colección Postman como un archivo json desde la aplicación Postman y ejecutarlo con Newman.
 En éste repositorio:
 ```
-newman run test/AbstractaPetStore.postman_collection.json
 git clone git@github.com:juanignaciorey/Api-Testing-Abstracta.git
 cd ./Api-Testing-Abstracta
+newman run test/AbstractaPetStore.postman_collection.json
 ```
 
 # Modo de uso
