@@ -1,0 +1,368 @@
+{
+	"info": {
+		"_postman_id": "b3352eb7-1a0f-47fb-bd4f-1b5d5beeebde",
+		"name": "US-240|TX|PetStoreAbstracta",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23073226"
+	},
+	"item": [
+		{
+			"name": "US 240 | TS 1 | Petstore | User",
+			"item": [
+				{
+					"name": "TC 01 | Crear un usuario",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"user.username\", \"usuario\" + Math.floor((Math.random() * 100) + 1));\r",
+									"pm.collectionVariables.set(\"user.password\", Math.floor((Math.random() * 10000) + 1));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Message is 'ok'\", function () {\r",
+									"    pm.expect(pm.response.json().message).to.eql(\"ok\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[{\r\n    \"id\": 0,\r\n    \"username\": \"{{user.username}}\",\r\n    \"firstName\": \"string\",\r\n    \"lastName\": \"string\",\r\n    \"email\": \"string\",\r\n    \"password\": \"{{user.password}}\",\r\n    \"phone\": \"string\",\r\n    \"userStatus\": 0\r\n}]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/createWithArray",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"createWithArray"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC 02 | Hacer login con el usuario recién creado",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/user/login?username={{user.username}}&password={{user.password}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"login"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "{{user.username}}"
+								},
+								{
+									"key": "password",
+									"value": "{{user.password}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC 06 | Hacer el logout a la aplicación",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/user/logout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "US 240 | TS 2 | Petstore | Pet",
+			"item": [
+				{
+					"name": "TC 03 | Listar todas las mascotas que tengan el status “disponible”",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"// Obtengo la lista de mascotas disponibles\r",
+									"var availablePets = pm.response.json().filter(pet => pet.status === \"available\");\r",
+									"\r",
+									"// Guardo el ultimo ID de mascota para luego adoptarla\r",
+									"var latestPetId = availablePets[availablePets.length - 1].id;\r",
+									"pm.collectionVariables.set(\"latestPetId\", latestPetId);\r",
+									"\r",
+									"// Guardo el primer ID de mascota para luego adoptarla\r",
+									"var firstPetId = availablePets[0].id;\r",
+									"pm.collectionVariables.set(\"firstPetId\", firstPetId);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pet/findByStatus?status=available",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pet",
+								"findByStatus"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "available"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC 05 | Agregar una nueva mascota a la Store",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var pet = pm.response.json();\r",
+									"\r",
+									"// Guardo el ID de mascota para luego adoptarla\r",
+									"pm.collectionVariables.set(\"PetIdToAdopt\", pet.id);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Rubi\",\r\n    \"photoUrls\": [\r\n        \"https://aexampleurl.com/NameOfImage.jpg\",\r\n        \"\"\r\n    ],\r\n    \"id\": -57576282,\r\n    \"category\": {\r\n        \"id\": 11160318,\r\n        \"name\": \"laboris minim\",\r\n        \"sub\": {\r\n            \"prop1\": \"esse ea\"\r\n        }\r\n    },\r\n    \"friend\": {\r\n        \"value\": \"<Circular reference to #/components/schemas/Pet detected>\"\r\n    },\r\n    \"tags\": [\r\n        {\r\n            \"id\": 76998725,\r\n            \"name\": \"cillum sunt\"\r\n        }\r\n    ],\r\n    \"status\": \"available\",\r\n    \"petType\": \"adipisicing in labore mollit\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/pet",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pet"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC 04 | Consultar los datos de una mascota en específico",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pet/{{PetIdToAdopt}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pet",
+								"{{PetIdToAdopt}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "US 240 | TS 3 | Petstore | Store",
+			"item": [
+				{
+					"name": "US 240 | TS3 | TC05 | Crear una orden (compra) para una mascota",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 47323114,\r\n    \"petId\": 45172571,\r\n    \"quantity\": 1,\r\n    \"shipDate\": \"1975-07-17T06:24:48.658Z\",\r\n    \"status\": \"approved\",\r\n    \"requestId\": \"laboris qui ea in cupidatat\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/store/order",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"store",
+								"order"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "US 240 | TS 4 | TC X | Otros",
+			"item": [
+				{
+					"name": "US 240 | TS 4 | Petstore | Store By ID",
+					"item": [
+						{
+							"name": "Buscar orden de compra por id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/store/order/:orderId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"store",
+										"order",
+										":orderId"
+									],
+									"variable": [
+										{
+											"key": "orderId",
+											"value": "1500",
+											"description": "(Required) ID of the order that needs to be finded"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Eliminar orden de compra por ID",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/store/order/:orderId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"store",
+										"order",
+										":orderId"
+									],
+									"variable": [
+										{
+											"key": "orderId",
+											"value": null,
+											"description": "(Required) ID of the order that needs to be deleted"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://petstore.swagger.io/v2",
+			"type": "string"
+		},
+		{
+			"key": "user.username",
+			"value": ""
+		},
+		{
+			"key": "user.password",
+			"value": ""
+		},
+		{
+			"key": "latestPetId",
+			"value": ""
+		},
+		{
+			"key": "firstPetId",
+			"value": ""
+		},
+		{
+			"key": "PetIdToAdopt",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
